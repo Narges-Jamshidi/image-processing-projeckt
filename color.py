@@ -23,11 +23,9 @@ def load_color_database():
     return color_data
 
 
-# چهار رنگی که بیشترین غلبه رنگی رو داره توی تصویر رو استخراج میکنه
-# با تغییر k میتوان این تعداد رو تغییر داد
 def extract_dominant_colors(image_path, k=4):
     img = Image.open(image_path)
-    img = img.resize((200, 200))  # کوچک‌سازی برای سرعت بیشتر( خودم هم نفهمیدم چه جوری کار میکنه ولی خب)
+    img = img.resize((200, 200))
     img_np = np.array(img)
     img_np = img_np.reshape(-1, 3)
 
@@ -37,7 +35,6 @@ def extract_dominant_colors(image_path, k=4):
     return colors.astype(int)
 
 
-# پیدا کردن نزدیک‌ترین رنگ دیتابیس به رنگ‌های استخراج شده
 def match_colors(dominant_colors, color_database):
     matched = []
     for color in dominant_colors:
@@ -53,21 +50,18 @@ def match_colors(dominant_colors, color_database):
     return matched
 
 
-# پردازش و نمایش نتیجه در رابط کاربری
 def process_image():
     file_path = filedialog.askopenfilename()
     if not file_path:
         return
 
-    # پاک کردن قبلی‌ها
     for widget in result_frame.winfo_children():
         widget.destroy()
 
     dominant_colors = extract_dominant_colors(file_path)
     matched_colors = match_colors(dominant_colors, color_database)
 
-    # بخش نمایش دادن تصویر
-    # نمایش عکس آپلود شده
+
     img = Image.open(file_path)
     img = img.resize((200, 200))
     img_tk = ImageTk.PhotoImage(img)
@@ -75,7 +69,7 @@ def process_image():
     Label(result_frame, image=img_tk).grid(row=1, column=0, pady=5)
     result_frame.image = img_tk
 
-    # نمایش رنگ‌ها
+
     Label(result_frame, text="Detected Colors").grid(row=0, column=1, columnspan=4)
     for idx, (name, img_path) in enumerate(matched_colors):
         Label(result_frame, text=name).grid(row=1, column=idx + 1)
@@ -97,11 +91,9 @@ root.geometry("800x400")
 
 color_database = load_color_database()
 
-# دکمه آپلود
 upload_btn = Button(root, text="آپلود عکس", command=process_image, font=("Arial", 14))
 upload_btn.pack(pady=20)
 
-# فریم برای نمایش نتایج
 result_frame = Frame(root)
 result_frame.pack()
 
